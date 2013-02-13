@@ -1,0 +1,3 @@
+[submodule "command"]
+	path = command
+	url = https://github.com/koyachi/go-boomkat.git
