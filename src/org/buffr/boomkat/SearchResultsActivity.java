@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class SearchResultsActivity extends Activity {
-    private String TAG = SearchResultsActivity.class.getSimpleName();
+    private static final String TAG = SearchResultsActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,14 +17,7 @@ public class SearchResultsActivity extends Activity {
         setContentView(R.layout.activity_search_results);
 
         // should start before come to this activity... => Service?
-        Command command = new Command(this, getAssets());
-
-        try {
-            Runtime.getRuntime().exec("chmod 0755 " + getCacheDir().getAbsolutePath());
-        } catch (IOException e) {
-            Log.d(TAG, "failed to chmod cache dir");
-        }
-
+        Command command = new Command();
         ArrayList<String> args = new ArrayList<String>();
         args.add("search");
         args.add("'Tim Hecker'");

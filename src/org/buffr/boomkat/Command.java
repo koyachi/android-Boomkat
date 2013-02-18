@@ -14,28 +14,31 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.ArrayList;
 
 public class Command {
-    private String TAG = Command.class.getSimpleName();
+    private static final String TAG = Command.class.getSimpleName();
 
     AtomicReference<Process> goProcess = new AtomicReference<Process>();
-    Context context;
-    AssetManager assetManager;
+    static Context context;
+    static AssetManager assetManager;
 
-    public Command(Context c, AssetManager am) {
+    public static void init(Context c, AssetManager am) {
         context = c;
         assetManager = am;
         copyBinary();
     }
 
-    private String binaryPath(String suffix) {
+    public Command() {
+    }
+
+    static private String binaryPath(String suffix) {
         return context.getFilesDir().getAbsolutePath() + "/" + suffix;
     }
 
-    private void copyBinary() {
+    static private void copyBinary() {
         String src = "boomkat-cli";
         maybeCopyFile(src, "boomkat-cli");
     }
 
-    private void maybeCopyFile(String src, String dstSuffix) {
+    static private void maybeCopyFile(String src, String dstSuffix) {
         String fullPath = binaryPath(dstSuffix);
         if (new File(fullPath).exists()) {
             Log.d(TAG, "file " + fullPath + " already exists.");
@@ -68,7 +71,7 @@ public class Command {
         if (p != null) {
             return;
         }
-        commandArgs.add(0, binaryPath("boomkat-cli"));
+        commandArgs.add(0, Command.binaryPath("boomkat-cli"));
         final ArrayList<String> commandList = new ArrayList<String>(commandArgs);
         Thread child = new Thread() {
             @Override
@@ -77,7 +80,6 @@ public class Command {
                 Thread writeThread = null;
                 try {
                     process = new ProcessBuilder()
-                        //.command(binaryPath("boomkat-cli"))
                         .command(commandList)
                         .redirectErrorStream(false)
                         .start();

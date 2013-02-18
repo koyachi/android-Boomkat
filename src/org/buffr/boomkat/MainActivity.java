@@ -3,13 +3,17 @@ package org.buffr.boomkat;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.IOException;
+
 import org.buffr.boomkat.R;
 
 public class MainActivity extends Activity {
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +27,13 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        Command.init(this, getAssets());
+        try {
+            Runtime.getRuntime().exec("chmod 0755 " + getCacheDir().getAbsolutePath());
+        } catch (IOException e) {
+            Log.d(TAG, "failed to chmod cache dir");
+        }
     }
 
     @Override
