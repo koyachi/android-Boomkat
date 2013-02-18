@@ -2,7 +2,7 @@ package org.buffr.boomkat;
 
 oneway interface ICommandCallback {
     void onSearchResponseStart(int count);
-    void onSearchResponseEachRecotd(int index, String title);
+    void onSearchResponseEachRecord(int index, String title);
     void onSearchResponseEnd();
     // void onError();
 

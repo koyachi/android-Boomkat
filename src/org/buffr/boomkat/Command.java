@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class Command {
     private static final String TAG = Command.class.getSimpleName();
@@ -19,6 +21,7 @@ public class Command {
     AtomicReference<Process> goProcess = new AtomicReference<Process>();
     static Context context;
     static AssetManager assetManager;
+    BoomkatService service;
 
     public static void init(Context c, AssetManager am) {
         context = c;
@@ -26,7 +29,8 @@ public class Command {
         copyBinary();
     }
 
-    public Command() {
+    public Command(BoomkatService service) {
+        this.service = service;
     }
 
     static private String binaryPath(String suffix) {
@@ -102,6 +106,7 @@ public class Command {
 
                         Log.d(TAG + "/command", line);
                         // TODO: process line
+                        parseLine(line);
                     }
                 } catch(IOException e) {
                     e.printStackTrace();
@@ -117,6 +122,50 @@ public class Command {
             }
         };
         child.start();
+    }
+
+    private void parseLine(String line) {
+        if (line.startsWith("CMD:SEARCH:")) {
+            processSearchResponse(line);
+            return;
+        }
+        /*
+        if (line.statsWith("CMD:xxx:")) {
+            processXXXResponse(line);
+            return;
+        }
+        */
+    }
+
+    private Pattern commandSearchStartPattern = Pattern.compile("^CMD:SEARCH:(.*?):START$");
+    private Pattern commandSearchRecordsPattern = Pattern.compile("^CMD:SEARCH:(.*?):RES:\\[(\\d+)\\] = \\{(.*?)\\}$");
+    private Pattern commandSearchEndPattern = Pattern.compile("^CMD:SEARCH:(.*?):END$");
+
+    private void processSearchResponse(String line) {
+        Log.d(TAG, "processSearchResponse");
+        Matcher m1 = commandSearchStartPattern.matcher(line);
+        if (m1.find()) {
+            String searchWord = m1.group(1);
+            // TODO: remove count argument.
+            service.onSearchResponseStart(0);
+            return;
+        }
+
+        Matcher m2 = commandSearchRecordsPattern.matcher(line);
+        if (m2.find()) {
+            String searchWord = m2.group(1);
+            int index = Integer.parseInt(m2.group(2));
+            // TODO: LTSV?
+            String title = m2.group(3);
+            service.onSearchResponseEachRecord(index, title);
+            return;
+        }
+        Matcher m3 = commandSearchEndPattern.matcher(line);
+        if (m3.find()){
+            String searchWord = m3.group(1);
+            service.onSearchResponseEnd();
+            return;
+        }
     }
 
     private class CopyToAndroidLogThread extends Thread {

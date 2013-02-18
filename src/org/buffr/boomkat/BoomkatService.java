@@ -3,6 +3,7 @@ package org.buffr.boomkat;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class BoomkatService extends Service {
         public void search(String word) {
             Log.d(TAG, "search(" + word + ")");
             synchronized(BoomkatService.this) {
-                Command command = new Command();
+                Command command = new Command(BoomkatService.this);
                 ArrayList<String> args = new ArrayList<String>();
                 args.add("search");
                 //args.add("'Tim Hecker'");
@@ -71,13 +72,35 @@ public class BoomkatService extends Service {
         }
     };
 
-    /*
     public void onSearchResponseStart(int count) {
-        if (callback != null) callback.onSearchResponStart();
+        if (callback == null) {
+            return;
+        }
+        try {
+            callback.onSearchResponseStart(count);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
-    public void onSearchResponseEachRecotd(int index, String title) {
+    public void onSearchResponseEachRecord(int index, String title) {
+        if (callback == null) {
+            return;
+        }
+        try {
+            callback.onSearchResponseEachRecord(index, title);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
     public void onSearchResponseEnd() {
+        if (callback == null) {
+            return;
+        }
+        try {
+            callback.onSearchResponseEnd();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
     // void onError();
 
@@ -97,5 +120,4 @@ public class BoomkatService extends Service {
     }
     public void onDownloadRecordResponseEnd() {
     }
-    */
 }

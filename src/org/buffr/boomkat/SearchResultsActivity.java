@@ -20,11 +20,17 @@ public class SearchResultsActivity extends Activity {
     private IBoomkatService serviceStub = null;
     private ICommandCallback callback = new ICommandCallback.Stub() {
         @Override
-        public void onSearchResponseStart(int count) {}
+        public void onSearchResponseStart(int count) {
+            Log.d(TAG, "onSearchResponseStart(" + count + ")");
+        }
         @Override
-        public void onSearchResponseEachRecotd(int index, String title) {}
+        public void onSearchResponseEachRecord(int index, String title) {
+            Log.d(TAG, "onSearchResponseEachRecord[" + index + "] title=" + title);
+        }
         @Override
-        public void onSearchResponseEnd() {}
+        public void onSearchResponseEnd() {
+            Log.d(TAG, "onSearchResponseStart");
+        }
         @Override
         public void onRecordInfoReponseStart() {}
         @Override
