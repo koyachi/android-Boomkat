@@ -47,12 +47,9 @@ public class SearchResultsActivity extends Activity {
             Log.d(TAG, "onSearchResponseStart(" + count + ")");
         }
         @Override
-        public void onSearchResponseEachRecord(int index, String title) {
-            Log.d(TAG, "onSearchResponseEachRecord[" + index + "] title=" + title);
-            Record r = new Record();
-            r.title = title;
-            r.artist = "hoge";
-            final Record r_ = r;
+        public void onSearchResponseEachRecord(int index, Record record) {
+            Log.d(TAG, "onSearchResponseEachRecord[" + index + "]");
+            final Record r_ = record;
             handler.post(new Runnable() {
                 @Override
                 public void run() {

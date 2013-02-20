@@ -8,6 +8,8 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import org.buffr.boomkat.data.Record;
+
 public class BoomkatService extends Service {
     private String TAG = BoomkatService.class.getSimpleName();
 
@@ -82,12 +84,12 @@ public class BoomkatService extends Service {
             e.printStackTrace();
         }
     }
-    public void onSearchResponseEachRecord(int index, String title) {
+    public void onSearchResponseEachRecord(int index, Record record) {
         if (callback == null) {
             return;
         }
         try {
-            callback.onSearchResponseEachRecord(index, title);
+            callback.onSearchResponseEachRecord(index, record);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

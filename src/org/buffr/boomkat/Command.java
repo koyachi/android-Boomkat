@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+import org.buffr.boomkat.data.Record;
+
 public class Command {
     private static final String TAG = Command.class.getSimpleName();
 
@@ -138,7 +140,7 @@ public class Command {
     }
 
     private Pattern commandSearchStartPattern = Pattern.compile("^CMD:SEARCH:(.*?):START$");
-    private Pattern commandSearchRecordsPattern = Pattern.compile("^CMD:SEARCH:(.*?):RES:\\[(\\d+)\\] = \\{(.*?)\\}$");
+    private Pattern commandSearchRecordsPattern = Pattern.compile("^CMD:SEARCH:(.*?):RES:\\[(\\d+)\\] = \\{id = (.*?), artist = (.*?), title = (.*?), label = (.*?), genre = \\[(.*?)\\], url = (.*?), thumbnail = (.*?)\\}$");
     private Pattern commandSearchEndPattern = Pattern.compile("^CMD:SEARCH:(.*?):END$");
 
     private void processSearchResponse(String line) {
@@ -156,8 +158,15 @@ public class Command {
             String searchWord = m2.group(1);
             int index = Integer.parseInt(m2.group(2));
             // TODO: LTSV?
-            String title = m2.group(3);
-            service.onSearchResponseEachRecord(index, title);
+            Record record = new Record();
+            record.id = m2.group(3);
+            record.artist = m2.group(4);
+            record.title = m2.group(5);
+            record.label = m2.group(6);
+            record.genre = m2.group(7);
+            record.url = m2.group(8);
+            record.thumbnailUrl = m2.group(9);
+            service.onSearchResponseEachRecord(index, record);
             return;
         }
         Matcher m3 = commandSearchEndPattern.matcher(line);

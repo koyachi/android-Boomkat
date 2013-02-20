@@ -1,8 +1,10 @@
 package org.buffr.boomkat;
 
+import org.buffr.boomkat.data.Record;
+
 oneway interface ICommandCallback {
     void onSearchResponseStart(int count);
-    void onSearchResponseEachRecord(int index, String title);
+    void onSearchResponseEachRecord(int index, in Record record);
     void onSearchResponseEnd();
     // void onError();
 
