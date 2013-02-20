@@ -6,6 +6,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -16,10 +18,13 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -197,9 +202,33 @@ public class SearchResultsActivity extends Activity {
             }
             Record record = (Record)getItem(position);
             if (record != null) {
+                /* this code throws "android.os.NetworkOnMainThreadException"
+                ImageView imageView = (ImageView)view.findViewById(R.id.cover);
+                if (imageView != null) {
+                    URL url;
+                    try {
+                        url = new URL(record.thumbnailUrl);
+                    } catch(MalformedURLException e) {
+                        e.printStackTrace();
+                        return view;
+                    }
+                    Bitmap bmp;
+                    try {
+                        bmp = BitmapFactory.decodeStream(url.openStream());
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                        return view;
+                    }
+                    imageView.setImageBitmap(bmp);
+                }
+                */
                 TextView titleTextView = (TextView)view.findViewById(R.id.title);
                 if (titleTextView != null) {
                     titleTextView.setText(record.title);
+                }
+                TextView artistTextView = (TextView)view.findViewById(R.id.artist);
+                if (artistTextView != null) {
+                    artistTextView.setText(record.artist);
                 }
             }
 
