@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -202,26 +203,41 @@ public class SearchResultsActivity extends Activity {
             }
             Record record = (Record)getItem(position);
             if (record != null) {
-                /* this code throws "android.os.NetworkOnMainThreadException"
-                ImageView imageView = (ImageView)view.findViewById(R.id.cover);
-                if (imageView != null) {
-                    URL url;
-                    try {
-                        url = new URL(record.thumbnailUrl);
-                    } catch(MalformedURLException e) {
-                        e.printStackTrace();
-                        return view;
+                // TODO: fix
+                final View v = view;
+                new AsyncTask<String, Void, Object>() {
+                    @Override
+                    protected Object doInBackground(String... urls) {
+                        URL url;
+                        Bitmap bmp;
+                        try {
+                            url = new URL(urls[0]);
+                        } catch(MalformedURLException e) {
+                            e.printStackTrace();
+                            return e;
+                        }
+                        try {
+                            bmp = BitmapFactory.decodeStream(url.openStream());
+                        } catch(IOException e) {
+                            e.printStackTrace();
+                            return e;
+                        }
+                        return bmp;
                     }
-                    Bitmap bmp;
-                    try {
-                        bmp = BitmapFactory.decodeStream(url.openStream());
-                    } catch(IOException e) {
-                        e.printStackTrace();
-                        return view;
+
+                    @Override
+                    protected void onPostExecute(Object result) {
+                        if (result instanceof MalformedURLException) {
+                            return;
+                        }
+                        if (result instanceof IOException) {
+                            return;
+                        }
+                        ImageView imageView = (ImageView)v.findViewById(R.id.cover);
+                        // TODO: if imageView is not in viewport, cancel setImageBitmap.
+                        imageView.setImageBitmap((Bitmap)result);
                     }
-                    imageView.setImageBitmap(bmp);
-                }
-                */
+                }.execute(record.thumbnailUrl);
                 TextView titleTextView = (TextView)view.findViewById(R.id.title);
                 if (titleTextView != null) {
                     titleTextView.setText(record.title);
