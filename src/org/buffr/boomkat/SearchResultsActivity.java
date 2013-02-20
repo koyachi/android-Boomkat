@@ -28,10 +28,14 @@ import org.buffr.boomkat.data.Record;
 public class SearchResultsActivity extends Activity {
     private static final String TAG = SearchResultsActivity.class.getSimpleName();
 
+    public static final String PARAM_SEARCH_WORD = "search_word";
+
     private ArrayList<Record> list = new ArrayList<Record>();
     private ListView listView;
     private MyAdapter adapter;
     private Handler handler = new Handler();
+
+    private String searchWord;
 
     private IBoomkatService serviceStub = null;
     private ICommandCallback callback = new ICommandCallback.Stub() {
@@ -82,7 +86,7 @@ public class SearchResultsActivity extends Activity {
             serviceStub = IBoomkatService.Stub.asInterface(service);
             try {
                 serviceStub.registerCallback(callback);
-                serviceStub.search("radicalfashion");
+                serviceStub.search(searchWord);
             } catch(RemoteException e) {
                 e.printStackTrace();
             }
@@ -116,6 +120,14 @@ public class SearchResultsActivity extends Activity {
             e.printStackTrace();
         }
         */
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            searchWord = intent.getStringExtra(PARAM_SEARCH_WORD);
+        } else {
+            searchWord = "";
+        }
+
         adapter = new MyAdapter(this, R.layout.activity_search_results_row, list);
         listView = (ListView)findViewById(R.id.list_view);
         listView.setAdapter(adapter);
