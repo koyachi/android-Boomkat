@@ -1,6 +1,7 @@
 package org.buffr.boomkat;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -30,10 +31,12 @@ public class SearchResultsActivity extends Activity {
 
     public static final String PARAM_SEARCH_WORD = "search_word";
 
+    // UI
     private ArrayList<Record> list = new ArrayList<Record>();
     private ListView listView;
     private MyAdapter adapter;
     private Handler handler = new Handler();
+    private ProgressDialog searchWaitDialog;
 
     private String searchWord;
 
@@ -59,7 +62,13 @@ public class SearchResultsActivity extends Activity {
         }
         @Override
         public void onSearchResponseEnd() {
-            Log.d(TAG, "onSearchResponseStart");
+            Log.d(TAG, "onSearchResponseEnd");
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    searchWaitDialog.dismiss();
+                }
+            });
         }
         @Override
         public void onRecordInfoReponseStart() {}
@@ -83,6 +92,12 @@ public class SearchResultsActivity extends Activity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(TAG, "onServiceConnected");
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    searchWaitDialog.show();
+                }
+            });
             serviceStub = IBoomkatService.Stub.asInterface(service);
             try {
                 serviceStub.registerCallback(callback);
@@ -128,6 +143,10 @@ public class SearchResultsActivity extends Activity {
             searchWord = "";
         }
 
+        searchWaitDialog = new ProgressDialog(this);
+        searchWaitDialog.setTitle(R.string.activity_search_results_dlg_search_wait_title);
+        searchWaitDialog.setMessage(getString(R.string.activity_search_results_dlg_search_wait_message));
+        searchWaitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         adapter = new MyAdapter(this, R.layout.activity_search_results_row, list);
         listView = (ListView)findViewById(R.id.list_view);
         listView.setAdapter(adapter);

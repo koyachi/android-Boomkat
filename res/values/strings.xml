@@ -5,4 +5,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
 
+    <string name="activity_search_results_dlg_search_wait_title">Search</string>
+    <string name="activity_search_results_dlg_search_wait_message">waiting response...</string>
+
 </resources>
