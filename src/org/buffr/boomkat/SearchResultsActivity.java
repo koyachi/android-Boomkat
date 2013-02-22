@@ -43,6 +43,7 @@ public class SearchResultsActivity extends Activity {
     private MyAdapter adapter;
     private Handler handler = new Handler();
     private ProgressDialog searchWaitDialog;
+    private boolean shouldShowSearchWaitDialog;
 
     private String searchWord;
 
@@ -95,12 +96,15 @@ public class SearchResultsActivity extends Activity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(TAG, "onServiceConnected");
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    searchWaitDialog.show();
-                }
-            });
+            if (shouldShowSearchWaitDialog) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        searchWaitDialog.show();
+                        shouldShowSearchWaitDialog = false;
+                    }
+                });
+            }
             serviceStub = IBoomkatService.Stub.asInterface(service);
             try {
                 serviceStub.registerCallback(callback);
@@ -131,12 +135,12 @@ public class SearchResultsActivity extends Activity {
         command.start(args);
         */
         /*
-        try {
-            //serviceStub.search("Tim Hecker");
-            //serviceStub.search("radicalfashion");
-        } catch(RemoteException e) {
-            e.printStackTrace();
-        }
+          try {
+          //serviceStub.search("Tim Hecker");
+          //serviceStub.search("radicalfashion");
+          } catch(RemoteException e) {
+          e.printStackTrace();
+          }
         */
 
         Intent intent = getIntent();
@@ -146,6 +150,7 @@ public class SearchResultsActivity extends Activity {
             searchWord = "";
         }
 
+        shouldShowSearchWaitDialog = true;
         searchWaitDialog = new ProgressDialog(this);
         searchWaitDialog.setTitle(R.string.activity_search_results_dlg_search_wait_title);
         searchWaitDialog.setMessage(getString(R.string.activity_search_results_dlg_search_wait_message));
