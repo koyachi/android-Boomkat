@@ -126,23 +126,6 @@ public class SearchResultsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
-        /*
-        // should start before come to this activity... => Service?
-        Command command = new Command();
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("search");
-        args.add("'Tim Hecker'");
-        command.start(args);
-        */
-        /*
-          try {
-          //serviceStub.search("Tim Hecker");
-          //serviceStub.search("radicalfashion");
-          } catch(RemoteException e) {
-          e.printStackTrace();
-          }
-        */
-
         Intent intent = getIntent();
         if (intent != null) {
             searchWord = intent.getStringExtra(PARAM_SEARCH_WORD);
