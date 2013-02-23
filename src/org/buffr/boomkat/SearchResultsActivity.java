@@ -107,6 +107,7 @@ public class SearchResultsActivity extends Activity {
         public void onDownloadRecordResponseEnd() {}
     };
 
+    private boolean isSearviceBound = false;
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -154,6 +155,8 @@ public class SearchResultsActivity extends Activity {
         searchWaitDialog.setMessage(getString(R.string.activity_search_results_dlg_search_wait_message));
         searchWaitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         adapter = new MyAdapter(this, R.layout.activity_search_results_row);
+
+        isSearviceBound = bindService(new Intent(this, BoomkatService.class), serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -174,7 +177,7 @@ public class SearchResultsActivity extends Activity {
         } catch(RemoteException e) {
             // igonre.
         }
-        if (serviceConnection != null)
+        if (serviceConnection != null && isSearviceBound)
             unbindService(serviceConnection);
     }
 
@@ -182,8 +185,7 @@ public class SearchResultsActivity extends Activity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-
-        bindService(new Intent(this, BoomkatService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+        isSearviceBound = false;
     }
 
     private class MyAdapter extends ArrayAdapter {
