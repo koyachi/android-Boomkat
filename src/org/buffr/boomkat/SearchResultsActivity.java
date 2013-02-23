@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -47,6 +48,19 @@ public class SearchResultsActivity extends Activity {
 
     private String searchWord;
 
+    private void initListView() {
+        adapter.addAll(list);
+        listView = (ListView)findViewById(R.id.list_view);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView parent, View view, int position, long id) {
+                ListView lv = (ListView)parent;
+                Record record = (Record)lv.getItemAtPosition(position);
+                Log.d(TAG, "onItemClick, title = " + record.title);
+            }
+        });
+        listView.setAdapter(adapter);
+    }
+
     private IBoomkatService serviceStub = null;
     private ICommandCallback callback = new ICommandCallback.Stub() {
         @Override
@@ -65,9 +79,7 @@ public class SearchResultsActivity extends Activity {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    adapter.addAll(list);
-                    listView = (ListView)findViewById(R.id.list_view);
-                    listView.setAdapter(adapter);
+                    initListView();
                     searchWaitDialog.dismiss();
                 }
             });
