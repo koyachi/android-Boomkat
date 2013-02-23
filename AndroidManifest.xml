@@ -28,6 +28,7 @@
             </intent-filter>
         </activity>
         <activity android:name="org.buffr.boomkat.SearchResultsActivity" />
+        <activity android:name="org.buffr.boomkat.RecordDetailActivity" />
     </application>
 
 </manifest>

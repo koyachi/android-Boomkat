@@ -56,6 +56,10 @@ public class SearchResultsActivity extends Activity {
                 ListView lv = (ListView)parent;
                 Record record = (Record)lv.getItemAtPosition(position);
                 Log.d(TAG, "onItemClick, title = " + record.title);
+
+                Intent intent = new Intent();
+                intent.setClass(SearchResultsActivity.this, RecordDetailActivity.class);
+                startActivity(intent);
             }
         });
         listView.setAdapter(adapter);
