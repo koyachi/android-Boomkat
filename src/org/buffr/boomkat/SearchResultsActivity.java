@@ -56,13 +56,8 @@ public class SearchResultsActivity extends Activity {
         @Override
         public void onSearchResponseEachRecord(int index, Record record) {
             Log.d(TAG, "onSearchResponseEachRecord[" + index + "]");
-            final Record r_ = record;
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    adapter.add(r_);
-                }
-            });
+            list.add(record);
+            adapter.loadThumbnail(record.thumbnailUrl);
         }
         @Override
         public void onSearchResponseEnd() {
@@ -70,6 +65,9 @@ public class SearchResultsActivity extends Activity {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    adapter.addAll(list);
+                    listView = (ListView)findViewById(R.id.list_view);
+                    listView.setAdapter(adapter);
                     searchWaitDialog.dismiss();
                 }
             });
@@ -138,9 +136,7 @@ public class SearchResultsActivity extends Activity {
         searchWaitDialog.setTitle(R.string.activity_search_results_dlg_search_wait_title);
         searchWaitDialog.setMessage(getString(R.string.activity_search_results_dlg_search_wait_message));
         searchWaitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        adapter = new MyAdapter(this, R.layout.activity_search_results_row, list);
-        listView = (ListView)findViewById(R.id.list_view);
-        listView.setAdapter(adapter);
+        adapter = new MyAdapter(this, R.layout.activity_search_results_row);
     }
 
     @Override
@@ -176,9 +172,10 @@ public class SearchResultsActivity extends Activity {
     private class MyAdapter extends ArrayAdapter {
         private LayoutInflater inflater;
         private int resource;
+        private ArrayList<Bitmap> bmpList = new ArrayList<Bitmap>();
 
-        public MyAdapter(Context context, int resource, List<Record> objects) {
-            super(context, resource, objects);
+        public MyAdapter(Context context, int resource) {
+            super(context, resource);
             this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             this.resource = resource;
         }
@@ -190,53 +187,36 @@ public class SearchResultsActivity extends Activity {
                 view = inflater.inflate(this.resource, null);
             }
             Record record = (Record)getItem(position);
-            if (record != null) {
-                // TODO: fix
-                final View v = view;
-                new AsyncTask<String, Void, Object>() {
-                    @Override
-                    protected Object doInBackground(String... urls) {
-                        URL url;
-                        Bitmap bmp;
-                        try {
-                            url = new URL(urls[0]);
-                        } catch(MalformedURLException e) {
-                            e.printStackTrace();
-                            return e;
-                        }
-                        try {
-                            bmp = BitmapFactory.decodeStream(url.openStream());
-                        } catch(IOException e) {
-                            e.printStackTrace();
-                            return e;
-                        }
-                        return bmp;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Object result) {
-                        if (result instanceof MalformedURLException) {
-                            return;
-                        }
-                        if (result instanceof IOException) {
-                            return;
-                        }
-                        ImageView imageView = (ImageView)v.findViewById(R.id.cover);
-                        // TODO: if imageView is not in viewport, cancel setImageBitmap.
-                        imageView.setImageBitmap((Bitmap)result);
-                    }
-                }.execute(record.thumbnailUrl);
-                TextView titleTextView = (TextView)view.findViewById(R.id.title);
-                if (titleTextView != null) {
-                    titleTextView.setText(record.title);
-                }
-                TextView artistTextView = (TextView)view.findViewById(R.id.artist);
-                if (artistTextView != null) {
-                    artistTextView.setText(record.artist);
-                }
+            ImageView imageView = (ImageView)view.findViewById(R.id.cover);
+            if (imageView != null && position <= bmpList.size()) {
+                imageView.setImageBitmap(bmpList.get(position));
             }
-
+            TextView titleTextView = (TextView)view.findViewById(R.id.title);
+            if (titleTextView != null) {
+                titleTextView.setText(record.title);
+            }
+            TextView artistTextView = (TextView)view.findViewById(R.id.artist);
+            if (artistTextView != null) {
+                artistTextView.setText(record.artist);
+            }
             return view;
+        }
+
+        public void loadThumbnail(String thumbnailUrl) {
+            URL url = null;
+            Bitmap bmp = null;
+            try {
+                url = new URL(thumbnailUrl);
+            } catch(MalformedURLException e) {
+                e.printStackTrace();
+            }
+            try {
+                bmp = BitmapFactory.decodeStream(url.openStream());
+            } catch(IOException e) {
+                e.printStackTrace();
+                return;
+            }
+            bmpList.add(bmp);
         }
     }
 }
