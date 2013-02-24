@@ -59,7 +59,7 @@ public class SearchResultsActivity extends Activity {
 
                 Intent intent = new Intent();
                 intent.setClass(SearchResultsActivity.this, RecordDetailActivity.class);
-                intent.putExtra(RecordDetailActivity.PARAM_RECORD_ID, record.id);
+                intent.putExtra(RecordDetailActivity.PARAM_RECORD, record);
                 startActivity(intent);
             }
         });

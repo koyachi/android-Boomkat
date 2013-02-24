@@ -6,6 +6,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -14,6 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.buffr.boomkat.R;
 import org.buffr.boomkat.data.Record;
@@ -21,14 +29,45 @@ import org.buffr.boomkat.data.Record;
 public class RecordDetailActivity extends Activity {
     private static final String TAG = RecordDetailActivity.class.getSimpleName();
 
-    public static final String PARAM_RECORD_ID = "record_id";
+    public static final String PARAM_RECORD = "record";
 
+    private Record record;
     private String recordId;
 
     // UI
     private Handler handler = new Handler();
     private ProgressDialog recordInfoWaitDialog;
     private boolean shouldShowRecordInfoWaitDialog;
+    private Bitmap coverBmp;
+
+    private Bitmap loadThumbnail(String thumbnailUrl) {
+        URL url = null;
+        Bitmap bmp = null;
+        try {
+            url = new URL(thumbnailUrl);
+        } catch(MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        try {
+            bmp = BitmapFactory.decodeStream(url.openStream());
+        } catch(IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return bmp;
+    }
+
+    private void initView() {
+        if (coverBmp != null) {
+            ImageView coverImageView = (ImageView)findViewById(R.id.cover);
+            coverImageView.setImageBitmap(coverBmp);
+        }
+        TextView titleTextView = (TextView)findViewById(R.id.title);
+        titleTextView.setText(record.title);
+        TextView artistTextView = (TextView)findViewById(R.id.artist);
+        titleTextView.setText(record.artist);
+    }
 
     private IBoomkatService serviceStub = null;
     private ICommandCallback callback = new ICommandCallback.Stub() {
@@ -46,6 +85,7 @@ public class RecordDetailActivity extends Activity {
         @Override
         public void onRecordInfoResponseBody(int index, Record record) {
             Log.d(TAG, "onRecordInfoReponseBody");
+            coverBmp = loadThumbnail(record.thumbnailUrl);
         }
         @Override
         public void onRecordInfoResponseRecordsByTheSameLabel(int index, Record record) {
@@ -69,7 +109,7 @@ public class RecordDetailActivity extends Activity {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    initListView();
+                    initView();
                     recordInfoWaitDialog.dismiss();
                 }
             });
@@ -125,16 +165,19 @@ public class RecordDetailActivity extends Activity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            recordId = intent.getStringExtra(PARAM_RECORD_ID);
+            record = intent.getParcelableExtra(PARAM_RECORD);
         } else {
-            recordId = "";
+            record = null;
         }
+        recordId = record.id;
         Log.d(TAG, "recordId = " + recordId);
+        Log.d(TAG, "record.title = " + record.title);
+        Log.d(TAG, "record.artist = " + record.artist);
 
         shouldShowRecordInfoWaitDialog = true;
         recordInfoWaitDialog = new ProgressDialog(this);
-        recordInfoWaitDialog.setTitle("aa");
-        recordInfoWaitDialog.setMessage("bb");
+        recordInfoWaitDialog.setTitle("Record detail");
+        recordInfoWaitDialog.setMessage("fetching record information...");
         recordInfoWaitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         isServiceBound = bindService(new Intent(this, BoomkatService.class), serviceConnection, Context.BIND_AUTO_CREATE);
     }
