@@ -9,8 +9,10 @@
                   android:orientation="horizontal">
         <LinearLayout android:id="@+id/record"
                       android:orientation="vertical"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content">
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      >
             <ImageView android:id="@+id/cover"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content" />
@@ -26,8 +28,13 @@
         </LinearLayout>
         <LinearLayout android:id="@+id/records_by_the_same_label"
                       android:orientation="vertical"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content">
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      >
+            <TextView android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:text="by the same label" />
             <ListView android:id="@+id/lv_by_the_same_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,8 +42,13 @@
         </LinearLayout>
         <LinearLayout android:id="@+id/records_also_bought"
                       android:orientation="vertical"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content">
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      >
+            <TextView android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:text="also bought" />
             <ListView android:id="@+id/lv_also_bought"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -44,8 +56,13 @@
         </LinearLayout>
         <LinearLayout android:id="@+id/records_by_the_same_artist"
                       android:orientation="vertical"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content">
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      >
+            <TextView android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:text="by the same artist" />
             <ListView android:id="@+id/lv_by_the_same_artist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -53,8 +70,13 @@
         </LinearLayout>
         <LinearLayout android:id="@+id/records_you_might_like"
                       android:orientation="vertical"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content">
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      >
+            <TextView android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:text="you might like" />
             <ListView android:id="@+id/lv_you_might_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -50,6 +50,18 @@ public class RecordDetailActivity extends Activity {
     private ListView recordsByTheSameLabelListView;
     private MyAdapter recordsByTheSameLabelAdapter;
 
+    private ArrayList<Record> recordsAlsoBoughtList = new ArrayList<Record>();
+    private ListView recordsAlsoBoughtListView;
+    private MyAdapter recordsAlsoBoughtAdapter;
+
+    private ArrayList<Record> recordsByTheSameArtistList = new ArrayList<Record>();
+    private ListView recordsByTheSameArtistListView;
+    private MyAdapter recordsByTheSameArtistAdapter;
+
+    private ArrayList<Record> recordsYouMightLikeList = new ArrayList<Record>();
+    private ListView recordsYouMightLikeListView;
+    private MyAdapter recordsYouMightLikeAdapter;
+
     private static Bitmap loadThumbnail(String thumbnailUrl) {
         URL url = null;
         Bitmap bmp = null;
@@ -76,11 +88,23 @@ public class RecordDetailActivity extends Activity {
         TextView titleTextView = (TextView)findViewById(R.id.title);
         titleTextView.setText(record.title);
         TextView artistTextView = (TextView)findViewById(R.id.artist);
-        titleTextView.setText(record.artist);
+        artistTextView.setText(record.artist);
 
         recordsByTheSameLabelAdapter.addAll(recordsByTheSameLabelList);
         recordsByTheSameLabelListView = (ListView)findViewById(R.id.lv_by_the_same_label);
         recordsByTheSameLabelListView.setAdapter(recordsByTheSameLabelAdapter);
+
+        recordsAlsoBoughtAdapter.addAll(recordsAlsoBoughtList);
+        recordsAlsoBoughtListView = (ListView)findViewById(R.id.lv_also_bought);
+        recordsAlsoBoughtListView.setAdapter(recordsAlsoBoughtAdapter);
+
+        recordsByTheSameArtistAdapter.addAll(recordsByTheSameArtistList);
+        recordsByTheSameArtistListView = (ListView)findViewById(R.id.lv_by_the_same_artist);
+        recordsByTheSameArtistListView.setAdapter(recordsByTheSameArtistAdapter);
+
+        recordsYouMightLikeAdapter.addAll(recordsYouMightLikeList);
+        recordsYouMightLikeListView = (ListView)findViewById(R.id.lv_you_might_like);
+        recordsYouMightLikeListView.setAdapter(recordsYouMightLikeAdapter);
     }
 
     private IBoomkatService serviceStub = null;
@@ -105,20 +129,25 @@ public class RecordDetailActivity extends Activity {
         public void onRecordInfoResponseRecordsByTheSameLabel(int index, Record record) {
             Log.d(TAG, "onRecordInfoReponseRecordsByTheSameLabel");
             recordsByTheSameLabelList.add(record);
-            Log.d(TAG, "  record.thumbnailUrl = " + record.thumbnailUrl);
             recordsByTheSameLabelAdapter.loadThumbnail(record.thumbnailUrl);
         }
         @Override
         public void onRecordInfoResponseRecordsAlsoBought(int index, Record record) {
             Log.d(TAG, "onRecordInfoReponseRecordsAlsoBought");
+            recordsAlsoBoughtList.add(record);
+            recordsAlsoBoughtAdapter.loadThumbnail(record.thumbnailUrl);
         }
         @Override
         public void onRecordInfoResponseRecordsByTheSameArtist(int index, Record record) {
             Log.d(TAG, "onRecordInfoReponseRecordsByTheSameArtist");
+            recordsByTheSameArtistList.add(record);
+            recordsByTheSameArtistAdapter.loadThumbnail(record.thumbnailUrl);
         }
         @Override
         public void onRecordInfoResponseRecordsYouMightLike(int index, Record record) {
             Log.d(TAG, "onRecordInfoReponseRecordsYouMightLike");
+            recordsYouMightLikeList.add(record);
+            recordsYouMightLikeAdapter.loadThumbnail(record.thumbnailUrl);
         }
         @Override
         public void onRecordInfoResponseEnd() {
@@ -198,6 +227,9 @@ public class RecordDetailActivity extends Activity {
         recordInfoWaitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
         recordsByTheSameLabelAdapter = new MyAdapter(this, R.layout.activity_record_detail_records_row);
+        recordsAlsoBoughtAdapter = new MyAdapter(this, R.layout.activity_record_detail_records_row);
+        recordsByTheSameArtistAdapter = new MyAdapter(this, R.layout.activity_record_detail_records_row);
+        recordsYouMightLikeAdapter = new MyAdapter(this, R.layout.activity_record_detail_records_row);
 
         isServiceBound = bindService(new Intent(this, BoomkatService.class), serviceConnection, Context.BIND_AUTO_CREATE);
     }
