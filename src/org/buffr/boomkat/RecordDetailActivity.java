@@ -16,12 +16,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.buffr.boomkat.R;
 import org.buffr.boomkat.data.Record;
@@ -40,7 +46,11 @@ public class RecordDetailActivity extends Activity {
     private boolean shouldShowRecordInfoWaitDialog;
     private Bitmap coverBmp;
 
-    private Bitmap loadThumbnail(String thumbnailUrl) {
+    private ArrayList<Record> recordsByTheSameLabelList = new ArrayList<Record>();
+    private ListView recordsByTheSameLabelListView;
+    private MyAdapter recordsByTheSameLabelAdapter;
+
+    private static Bitmap loadThumbnail(String thumbnailUrl) {
         URL url = null;
         Bitmap bmp = null;
         try {
@@ -67,6 +77,10 @@ public class RecordDetailActivity extends Activity {
         titleTextView.setText(record.title);
         TextView artistTextView = (TextView)findViewById(R.id.artist);
         titleTextView.setText(record.artist);
+
+        recordsByTheSameLabelAdapter.addAll(recordsByTheSameLabelList);
+        recordsByTheSameLabelListView = (ListView)findViewById(R.id.lv_by_the_same_label);
+        recordsByTheSameLabelListView.setAdapter(recordsByTheSameLabelAdapter);
     }
 
     private IBoomkatService serviceStub = null;
@@ -85,11 +99,14 @@ public class RecordDetailActivity extends Activity {
         @Override
         public void onRecordInfoResponseBody(int index, Record record) {
             Log.d(TAG, "onRecordInfoReponseBody");
-            coverBmp = loadThumbnail(record.thumbnailUrl);
+            coverBmp = RecordDetailActivity.loadThumbnail(record.thumbnailUrl);
         }
         @Override
         public void onRecordInfoResponseRecordsByTheSameLabel(int index, Record record) {
             Log.d(TAG, "onRecordInfoReponseRecordsByTheSameLabel");
+            recordsByTheSameLabelList.add(record);
+            Log.d(TAG, "  record.thumbnailUrl = " + record.thumbnailUrl);
+            recordsByTheSameLabelAdapter.loadThumbnail(record.thumbnailUrl);
         }
         @Override
         public void onRecordInfoResponseRecordsAlsoBought(int index, Record record) {
@@ -179,6 +196,9 @@ public class RecordDetailActivity extends Activity {
         recordInfoWaitDialog.setTitle("Record detail");
         recordInfoWaitDialog.setMessage("fetching record information...");
         recordInfoWaitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+        recordsByTheSameLabelAdapter = new MyAdapter(this, R.layout.activity_record_detail_records_row);
+
         isServiceBound = bindService(new Intent(this, BoomkatService.class), serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -211,4 +231,41 @@ public class RecordDetailActivity extends Activity {
         isServiceBound = false;
     }
 
+    private class MyAdapter extends ArrayAdapter {
+        private LayoutInflater inflater;
+        private int resource;
+        private ArrayList<Bitmap> bmpList = new ArrayList<Bitmap>();
+
+        public MyAdapter(Context context, int resource) {
+            super(context, resource);
+            this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            this.resource = resource;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = convertView;
+            if (view == null) {
+                view = inflater.inflate(this.resource, null);
+            }
+            Record record = (Record)getItem(position);
+            ImageView imageView = (ImageView)view.findViewById(R.id.cover);
+            if (imageView != null && position <= bmpList.size()) {
+                imageView.setImageBitmap(bmpList.get(position));
+            }
+            TextView titleTextView = (TextView)view.findViewById(R.id.title);
+            if (titleTextView != null) {
+                titleTextView.setText(record.title);
+            }
+            TextView artistTextView = (TextView)view.findViewById(R.id.artist);
+            if (artistTextView != null) {
+                artistTextView.setText(record.artist);
+            }
+            return view;
+        }
+
+        public void loadThumbnail(String thumbnailUrl) {
+            bmpList.add(RecordDetailActivity.loadThumbnail(thumbnailUrl));
+        }
+    }
 }

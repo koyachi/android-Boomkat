@@ -199,7 +199,7 @@ public class Command {
 
     private Pattern commandRecordInfoStartPattern = Pattern.compile("^CMD:RecordInfo:(.*?):START$");
     private Pattern commandRecordInfoBodyPattern = Pattern.compile("^CMD:RecordInfo:(.*?):RECORD_INFO:\\[(\\d+)\\] = " + recrodInfoRegexpPattern + "$");
-    private Pattern commandRecordInfoRecordsByTheSameLabelPattern = Pattern.compile("^CMD:RecordInfo:(.*?):BY_THE_SAMELABEL:\\[(\\d+)\\] = " + recrodInfoRegexpPattern + "$");
+    private Pattern commandRecordInfoRecordsByTheSameLabelPattern = Pattern.compile("^CMD:RecordInfo:(.*?):BY_THE_SAME_LABEL:\\[(\\d+)\\] = " + recrodInfoRegexpPattern + "$");
     private Pattern commandRecordInfoRecordsAlsoBoughtPattern = Pattern.compile("^CMD:RecordInfo:(.*?):ALSO_BOUGHT:\\[(\\d+)\\] = " + recrodInfoRegexpPattern + "$");
     private Pattern commandRecordInfoRecordsByTheSameArtistPattern = Pattern.compile("^CMD:RecordInfo:(.*?):BY_THE_SAME_ARTIST:\\[(\\d+)\\] = " + recrodInfoRegexpPattern + "$");
     private Pattern commandRecordInfoRecordsYouMightLikePattern = Pattern.compile("^CMD:RecordInfo:(.*?):YOU_MIGHT_LIKE:\\[(\\d+)\\] = " + recrodInfoRegexpPattern + "$");
