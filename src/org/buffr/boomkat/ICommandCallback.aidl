@@ -8,8 +8,13 @@ oneway interface ICommandCallback {
     void onSearchResponseEnd();
     // void onError();
 
-    void onRecordInfoReponseStart();
-    void onRecordInfoReponseEnd();
+    void onRecordInfoResponseStart();
+    void onRecordInfoResponseBody(int index, in Record record);
+    void onRecordInfoResponseRecordsByTheSameLabel(int index, in Record record);
+    void onRecordInfoResponseRecordsAlsoBought(int index, in Record record);
+    void onRecordInfoResponseRecordsByTheSameArtist(int index, in Record record);
+    void onRecordInfoResponseRecordsYouMightLike(int index, in Record record);
+    void onRecordInfoResponseEnd();
 
     void onDownloadTrackResponseStart();
     void onDownloadTrackResponseEnd();

@@ -63,9 +63,18 @@ public class BoomkatService extends Service {
 
         @Override
         public void recordInfo(String recordId) {
+            Log.d(TAG, "recordInfo(" + recordId + ")");
+            synchronized(BoomkatService.this) {
+                Command command = new Command(BoomkatService.this);
+                ArrayList<String> args = new ArrayList<String>();
+                args.add("info");
+                //args.add("467910");
+                args.add(recordId);
+                command.start(args);
+            }
         }
 
-        @Override
+        @Overridep
         public void downloadTrack(String recordId, String trackId) {
         }
 
@@ -106,9 +115,75 @@ public class BoomkatService extends Service {
     }
     // void onError();
 
-    public void onRecordInfoReponseStart() {
+    public void onRecordInfoResponseStart() {
+        if (callback == null) {
+            return;
+        }
+        try {
+            callback.onRecordInfoResponseStart();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
-    public void onRecordInfoReponseEnd() {
+    public void onRecordInfoResponseBody(int index, Record record) {
+        if (callback == null) {
+            return;
+        }
+        try {
+            callback.onRecordInfoResponseBody(index, record);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+    public void onRecordInfoResponseRecordsByTheSameLabel(int index, Record record) {
+        if (callback == null) {
+            return;
+        }
+        try {
+            callback.onRecordInfoResponseRecordsByTheSameLabel(index, record);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+    public void onRecordInfoResponseRecordsAlsoBought(int index, Record record) {
+        if (callback == null) {
+            return;
+        }
+        try {
+            callback.onRecordInfoResponseRecordsAlsoBought(index, record);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+    public void onRecordInfoResponseRecordsByTheSameArtist(int index, Record record) {
+        if (callback == null) {
+            return;
+        }
+        try {
+            callback.onRecordInfoResponseRecordsByTheSameArtist(index, record);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+    public void onRecordInfoResponseRecordsYouMightLike(int index, Record record) {
+        if (callback == null) {
+            return;
+        }
+        try {
+            callback.onRecordInfoResponseRecordsYouMightLike(index, record);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+    public void onRecordInfoResponseEnd() {
+        if (callback == null) {
+            return;
+        }
+        try {
+            callback.onRecordInfoResponseEnd();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onDownloadTrackResponseStart() {

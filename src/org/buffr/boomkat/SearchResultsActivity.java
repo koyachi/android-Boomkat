@@ -90,9 +90,19 @@ public class SearchResultsActivity extends Activity {
             });
         }
         @Override
-        public void onRecordInfoReponseStart() {}
+        public void onRecordInfoResponseStart() {}
         @Override
-        public void onRecordInfoReponseEnd() {}
+        public void onRecordInfoResponseBody(int index, Record record) {}
+        @Override
+        public void onRecordInfoResponseRecordsByTheSameLabel(int index, Record record) {}
+        @Override
+        public void onRecordInfoResponseRecordsAlsoBought(int index, Record record) {}
+        @Override
+        public void onRecordInfoResponseRecordsByTheSameArtist(int index, Record record) {}
+        @Override
+        public void onRecordInfoResponseRecordsYouMightLike(int index, Record record) {}
+        @Override
+        public void onRecordInfoResponseEnd() {}
 
         @Override
         public void onDownloadTrackResponseStart() {}
@@ -107,7 +117,7 @@ public class SearchResultsActivity extends Activity {
         public void onDownloadRecordResponseEnd() {}
     };
 
-    private boolean isSearviceBound = false;
+    private boolean isServiceBound = false;
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -156,7 +166,7 @@ public class SearchResultsActivity extends Activity {
         searchWaitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         adapter = new MyAdapter(this, R.layout.activity_search_results_row);
 
-        isSearviceBound = bindService(new Intent(this, BoomkatService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+        isServiceBound = bindService(new Intent(this, BoomkatService.class), serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -177,7 +187,7 @@ public class SearchResultsActivity extends Activity {
         } catch(RemoteException e) {
             // igonre.
         }
-        if (serviceConnection != null && isSearviceBound)
+        if (serviceConnection != null && isServiceBound)
             unbindService(serviceConnection);
     }
 
@@ -185,7 +195,7 @@ public class SearchResultsActivity extends Activity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        isSearviceBound = false;
+        isServiceBound = false;
     }
 
     private class MyAdapter extends ArrayAdapter {
