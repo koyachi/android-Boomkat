@@ -48,6 +48,7 @@ public class Command {
         String fullPath = binaryPath(dstSuffix);
         if (new File(fullPath).exists()) {
             Log.d(TAG, "file " + fullPath + " already exists.");
+            return;
         }
         try {
             InputStream is = assetManager.open(src);
