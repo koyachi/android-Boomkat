@@ -1,6 +1,6 @@
-# android-boomkat
+# android-Boomkat
 
-boomkat Android client. using [go-boomkat](https://github.com/koyachi/go-boomkat) as a scraper process.
+[boomkat](http://boomkat.com) Android client. using [go-boomkat](https://github.com/koyachi/go-boomkat) as a scraper process.
 
 more detail(japanese): http://00b4f5.tumblr.com/post/43979836762/android-go-boomkat
 
